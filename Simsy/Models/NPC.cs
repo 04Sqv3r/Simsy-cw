@@ -1,4 +1,4 @@
-﻿using Simsy.Interface;
+using Simsy.Interface;
 using Simsy.Models;
 
 public enum NPCEmotion
@@ -6,9 +6,9 @@ public enum NPCEmotion
     Neutral,
     Happy,
     Angry,
-    Surprised
+    Surprised,
+    Sad
 }
-
 public class NPC : INPC
 {
     public string Name { get; set; }
@@ -16,56 +16,76 @@ public class NPC : INPC
     public int RelationshipLevel { get; set; } = 0;
     public bool Met { get; set; } = false;
     public string Gender { get; set; }
+    public NPCEmotion CurrentEmotion { get; private set; } = NPCEmotion.Neutral;
+    public List<string> Interests { get; set; }
+    public string PersonalityType { get; set; } = "Neutral";  
     private Random rng = new Random();
 
-    public NPC(string name, int age, string gender)
+    public NPC(string name, int age, string gender, List<string> interests)
     {
         Name = name;
         Age = age;
         Gender = gender;
+        Interests = interests;
     }
 
-    public void Greet(Person character)
+    public void Greet(Character character)
     {
         Met = true;
-        NPCEmotion reaction = (NPCEmotion)rng.Next(0, 4);
-        Console.WriteLine($"{Name} ({Gender}) mowi: ");
+        CurrentEmotion = (NPCEmotion)rng.Next(0, 5);
+        Console.WriteLine($"{Name} ({Gender}) mowi:");
 
-        switch (reaction)
+        switch (CurrentEmotion)
         {
             case NPCEmotion.Happy:
-                Console.WriteLine("\"Hej! Ale sie ciesze ze cie widze!\" ");
+                Console.WriteLine("\"Hej! Ale sie ciesze ze cie widze!\"");
                 RelationshipLevel += 10;
                 break;
             case NPCEmotion.Angry:
-                Console.WriteLine("\"Och... ty znowu...\" ");
+                Console.WriteLine("\"Ojej... znowu ty...\"");
                 RelationshipLevel -= 5;
                 break;
             case NPCEmotion.Surprised:
-                Console.WriteLine("\"O, nie spodziewalam sie ciebie.\" ");
+                Console.WriteLine("\"O! Nie spodziewalem sie ciebie.\"");
                 RelationshipLevel += 2;
                 break;
+            case NPCEmotion.Sad:
+                Console.WriteLine("\"Hej... mam dzis slaby dzien.\"");
+                RelationshipLevel -= 2;
+                break;
             default:
-                Console.WriteLine("\"Czesc.\" ");
+                Console.WriteLine("\"Czesc.\"");
                 break;
         }
     }
 
-    public void Talk(Person character)
+    public void Talk(Character character)
     {
-        Console.WriteLine($"{Name}: \"Fajnie bylo pogadac.\" ");
+        Console.WriteLine($"{Name}: \"Fajnie bylo pogadac.\"");
         RelationshipLevel += 5;
         character.Statistics.Happiness += 3;
+        CurrentEmotion = NPCEmotion.Happy;
     }
 
-    public void GiveGift(Person character)
+    public void GiveGift(Character character, Gift gift)
     {
-        Console.WriteLine($"{Name} daje ci prezent ");
-        character.Wallet.Earn(30);
-        RelationshipLevel += 7;
+        Console.WriteLine($"{Name} otrzymuje prezent: {gift.Name}");
+
+        if (Interests.Contains(gift.Type))
+        {
+            Console.WriteLine($"{Name} uwielbia takie rzeczy!");
+            RelationshipLevel += 10;
+            CurrentEmotion = NPCEmotion.Happy;
+        }
+        else
+        {
+            Console.WriteLine($"{Name} przyjmuje prezent, ale nie jest zachwycony.");
+            RelationshipLevel += 3;
+            CurrentEmotion = NPCEmotion.Neutral;
+        }
     }
 
-    public void Kiss(Person character)
+    public void Kiss(Character character)
     {
         if (RelationshipLevel < 60 || Gender != "Kobieta")
         {
@@ -73,22 +93,25 @@ public class NPC : INPC
             return;
         }
 
-        Console.WriteLine($"Probujesz pocalowac {Name}... ");
+        Console.WriteLine($"Probujesz pocalowac {Name}...");
 
         int reaction = rng.Next(0, 3);
         switch (reaction)
         {
             case 0:
-                Console.WriteLine($"{Name} odwzajemnia pocalunek ");
+                Console.WriteLine($"{Name} odwzajemnia pocalunek.");
                 RelationshipLevel += 15;
+                CurrentEmotion = NPCEmotion.Happy;
                 break;
             case 1:
-                Console.WriteLine($"{Name} mowi: \"Hej... to za szybko.\" ");
+                Console.WriteLine($"{Name} mowi: \"To za szybko...\"");
                 RelationshipLevel -= 10;
+                CurrentEmotion = NPCEmotion.Sad;
                 break;
             case 2:
-                Console.WriteLine($"{Name} sie odsuwa i wyglada na zla. ");
+                Console.WriteLine($"{Name} odsuwa sie i jest zla.");
                 RelationshipLevel -= 20;
+                CurrentEmotion = NPCEmotion.Angry;
                 break;
         }
     }
