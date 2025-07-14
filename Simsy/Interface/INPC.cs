@@ -1,4 +1,4 @@
-﻿using Simsy.Models;
+using Simsy.Models;
 
 namespace Simsy.Interface
 {
@@ -8,8 +8,9 @@ namespace Simsy.Interface
         int Age { get; set; }
         int RelationshipLevel { get; set; }
 
-        void Greet(Person character);
-        void Talk(Person character);
-        void GiveGift(Person character);
+        void Greet(Character character);
+        void Talk(Character character);
+        void GiveGift(Character character, Gift gift); 
+        void Kiss(Character character);
     }
 }
