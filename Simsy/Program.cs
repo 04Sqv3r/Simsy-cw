@@ -58,10 +58,10 @@ namespace Simsy
 
             var allNpc = new List<NPC>
             {
-                new NPC("Anna", 24, "Kobieta"),
-                new NPC("Jacek", 30, "Mezczyzna"),
-                new NPC("Daria", 22, "Kobieta"),
-                new NPC("Henry", 27, "Mezczyzna")
+               new NPC("Anna", 24, "Kobieta", new List<string> { "Baking pies", "Listening to sea shanties", "Shell collecting", "Telling ghost stories"}),
+new NPC("Jacek", 30, "Mezczyzna", new List < string > { "Trading", "Storytelling", "Fishing" }),
+new NPC("Daria", 22, "Kobieta", new List<string> { "Gadget building", "Steam engines", "Sketching blueprints", "Puzzle solving", "Tinkering with tools" }),
+new NPC("Henry", 27, "Mezczyzna", new List<string> { "Tracking animals", "Archery", "Herbal medicine", "Campfire cooking", "Wood carving" })
             };
 
             bool game = true;
